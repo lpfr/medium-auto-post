@@ -1,3 +1,6 @@
+// ✅ 修复版 server.js for Railway 部署
+// 自动使用 Railway 分配的 PORT，避免构建超时错误
+
 const puppeteer = require("puppeteer");
 const express = require("express");
 const app = express();
@@ -8,6 +11,8 @@ app.post("/publish", async (req, res) => {
   if (!title || !content) {
     return res.status(400).send("❌ Title or content missing.");
   }
+
+  console.log("🚀 Launching Puppeteer...");
 
   const browser = await puppeteer.launch({
     headless: false,
@@ -21,6 +26,7 @@ app.post("/publish", async (req, res) => {
   try {
     await page.waitForSelector('div[contenteditable="true"]', { timeout: 20000 });
     const editableAreas = await page.$$('div[contenteditable="true"]');
+
     if (editableAreas.length >= 1) {
       await editableAreas[0].click();
       await page.keyboard.type(title);
@@ -44,5 +50,6 @@ app.post("/publish", async (req, res) => {
   }
 });
 
+// ✅ 修复关键：动态监听 Railway 提供的 PORT
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Medium publisher listening on port ${PORT}`));
