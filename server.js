@@ -46,4 +46,3 @@ app.post("/publish", async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Medium publisher listening on port ${PORT}`));
-
